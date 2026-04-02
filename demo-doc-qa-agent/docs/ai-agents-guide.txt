@@ -1,0 +1,83 @@
+AI Agents in Production: A Technical Guide for SaaS Teams
+
+1. What Are AI Agents?
+
+AI agents are software systems that use large language models (LLMs) to autonomously perform tasks. Unlike simple chatbots that only respond to prompts, agents can plan multi-step workflows, use tools, make decisions, and take actions in external systems.
+
+The key distinction is autonomy: a chatbot answers questions, while an agent completes objectives. For example, an agent might receive a customer support ticket, classify its urgency, look up the customer's account history in a CRM, draft a response, and route the ticket to the right team — all without human intervention.
+
+2. Core Architecture Patterns
+
+2.1 ReAct (Reasoning + Acting)
+The most common agent pattern. The LLM alternates between reasoning about what to do next and taking actions using tools. Each action produces an observation, which feeds back into the next reasoning step. This loop continues until the task is complete.
+
+2.2 RAG (Retrieval-Augmented Generation)
+Combines a vector database with an LLM. Documents are chunked, embedded, and stored. When a question arrives, the system retrieves relevant chunks and includes them as context for the LLM. This grounds the model's responses in actual data rather than training knowledge.
+
+2.3 Multi-Agent Systems
+Multiple specialized agents collaborate on complex tasks. For example, a research agent gathers information, an analysis agent processes it, and a writing agent produces the final output. Each agent has its own tools and system prompt optimized for its role.
+
+3. Tool Calling
+
+Tool calling (also called function calling) is how agents interact with external systems. The LLM receives descriptions of available tools (name, parameters, purpose) and decides which to call based on the current task.
+
+Common tools include:
+- Web search APIs for retrieving current information
+- Database queries for accessing structured data
+- File operations for reading and writing documents
+- API calls for interacting with external services (CRM, email, Slack)
+- Code execution for running calculations or data processing
+
+The key insight is that tools are defined with schemas (typically JSON Schema or Zod), so the LLM generates structured, type-safe arguments.
+
+4. Human-in-the-Loop Patterns
+
+Not all agent decisions should be automated. Critical patterns include:
+
+4.1 Approval Gates
+The agent drafts an action but pauses for human approval before executing. Used for high-stakes operations like sending customer communications or modifying production data.
+
+4.2 Confidence Thresholds
+The agent operates autonomously when confident, but escalates to humans when uncertain. This is implemented by having the model output a confidence score alongside its decision.
+
+4.3 Audit Trails
+Every agent decision is logged with full context: what the agent saw, what it decided, why, and what tools it called. This enables post-hoc review and model improvement.
+
+5. Production Considerations
+
+5.1 Cost Management
+LLM API calls are priced per token. Agent loops can be expensive because each step requires a full API call with growing context. Strategies include: using smaller models for simple classification, caching repeated queries, and setting maximum step limits.
+
+5.2 Latency
+Agent loops are inherently sequential — each step waits for the previous one. End-to-end latency can be 10-60 seconds for complex tasks. Mitigations include streaming responses, parallel tool calls, and breaking long tasks into async workflows.
+
+5.3 Reliability
+LLMs are non-deterministic. The same prompt can produce different results. Production agents need: retry logic with exponential backoff, fallback models, input validation, output validation against schemas, and graceful degradation when the model fails.
+
+5.4 Security
+Agents that interact with external systems need careful sandboxing. Key concerns:
+- Prompt injection: malicious inputs that hijack the agent's behavior
+- Over-permissioned tools: agents should have least-privilege access
+- Data leakage: ensuring sensitive data isn't sent to external LLM APIs
+- Rate limiting: preventing runaway agent loops from exhausting resources
+
+6. Evaluation and Testing
+
+Agent testing requires different approaches than traditional software:
+- Unit tests for individual tools
+- Integration tests for tool chains
+- Evaluation sets: curated input/output pairs scored against expected behavior
+- Human evaluation for subjective quality (tone, accuracy, helpfulness)
+- A/B testing in production with real traffic
+
+The gold standard is a combination of automated eval metrics and periodic human review of agent outputs.
+
+7. When Not to Use Agents
+
+Agents add complexity. Simpler solutions are often better:
+- If the workflow is fixed (always the same steps), use a simple pipeline instead
+- If classification is the only task, a single LLM call with structured output suffices
+- If latency requirements are under 1 second, agents are too slow
+- If the task doesn't require external tool interaction, a standard prompt is enough
+
+The best agent implementations solve problems where the workflow varies based on input, multiple tools need to be coordinated, and the task benefits from the LLM's reasoning capabilities.
