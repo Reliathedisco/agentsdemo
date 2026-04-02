@@ -89,16 +89,22 @@ export async function scoreLead(lead: LeadInput): Promise<LeadScore> {
     .join("\n");
 
   const { object } = await generateObject({
-    model: openai("gpt-4o-mini"),
+    model: openai("gpt-4o"),
     schema: LeadScoreSchema,
     system: `You are an expert lead qualification AI for a B2B SaaS company.
 Score incoming leads based on how well they match the Ideal Customer Profile and their likelihood to convert.
 
 ${ICP_CONTEXT}
 
+CRITICAL SCORING RULES:
+- The "score" field MUST be consistent with "idealCustomerFit" and "buyIntent". Calculate it as: score = (idealCustomerFit * 0.4) + (buyIntent * 0.35) + (engagementQuality * 0.25), where engagementQuality is 0-100 based on message detail.
+- Tier thresholds: hot >= 70, warm >= 40, cold >= 15, disqualified < 15
+- A CTO at a 50-100 person SaaS company with high buy intent should score 70+, not 0
+- The score, tier, and sub-scores must all tell the same story — never output a score of 0 with an idealCustomerFit of 80%
+
 Be analytical and precise. Explain your scoring reasoning through the signals array.
 Write a personalized follow-up that references specific details from their submission.`,
-    prompt: `Score this lead:\n\n${leadContext}`,
+    prompt: `Score this lead. Remember: score = (idealCustomerFit * 0.4) + (buyIntent * 0.35) + (engagementQuality * 0.25). The tier must match the score.\n\n${leadContext}`,
   });
 
   return object;

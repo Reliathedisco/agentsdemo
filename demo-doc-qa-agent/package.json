@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "ingest": "tsx src/ingest.ts",
-    "chat": "tsx src/chat.ts",
-    "serve": "tsx src/server.ts"
+    "ingest": "node --env-file=.env --import tsx src/ingest.ts",
+    "chat": "node --env-file=.env --import tsx src/chat.ts",
+    "serve": "node --env-file=.env --import tsx src/server.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.0",

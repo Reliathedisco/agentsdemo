@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx src/server.ts",
-    "simulate": "tsx src/simulate.ts"
+    "dev": "node --env-file=.env --import tsx src/server.ts",
+    "simulate": "node --env-file=.env --import tsx src/simulate.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.0",
