@@ -1,0 +1,25 @@
+{
+  "name": "demo-doc-qa-agent",
+  "version": "1.0.0",
+  "description": "RAG-powered Document Q&A Agent — ingest PDFs, build embeddings, chat with your documents",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "ingest": "tsx src/ingest.ts",
+    "chat": "tsx src/chat.ts",
+    "serve": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^1.0.0",
+    "@hono/node-server": "^1.19.12",
+    "ai": "^4.0.0",
+    "glob": "^11.0.0",
+    "hono": "^4.6.0",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

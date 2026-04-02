@@ -1,0 +1,23 @@
+{
+  "name": "demo-research-agent",
+  "version": "1.0.0",
+  "description": "Multi-step research agent that searches, evaluates, and synthesizes information into structured reports",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "research": "tsx src/agent.ts",
+    "serve": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^1.0.0",
+    "@hono/node-server": "^1.19.12",
+    "ai": "^4.0.0",
+    "hono": "^4.6.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
